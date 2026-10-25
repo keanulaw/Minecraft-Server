@@ -46,6 +46,20 @@ Because the setup script is smart, it has already transformed into a simple laun
    ./playit.sh
    ```
 
+## Updating Plugins
+Stop the server (type `stop` in the console), then run:
+```bash
+./update-plugins.sh
+```
+This downloads the latest `Geyser`, `Floodgate` and `ViaVersion` into `plugins/`. Run it whenever the console says a newer version is available, especially if Bedrock players can't join after their app updates.
+
+## Anti-Xray
+Paper has a built-in anti-xray that hides ores from x-ray clients and resource packs. It is off by default. To turn it on, start the server once so the worlds are created, stop it, then run:
+```bash
+./enable-antixray.sh
+```
+It enables anti-xray for the overworld and the nether using the settings recommended by Paper. Running it again is safe.
+
 ## Limitations & Drawbacks
 While this method is powerful and free, it comes with a few limitations you should be aware of:
 
