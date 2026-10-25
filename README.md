@@ -60,6 +60,13 @@ Paper has a built-in anti-xray that hides ores from x-ray clients and resource p
 ```
 It enables anti-xray for the overworld and the nether using the settings recommended by Paper. Running it again is safe.
 
+## Performance
+For a smooth server with a small group of friends, stop the server and run:
+```bash
+./optimize.sh
+```
+It lowers view distance to 8 and simulation distance to 6, switches the launcher to Aikar's JVM flags with RAM sized to your Codespace, and installs the Chunky plugin. Afterwards, pre-generate the world once from the console with `chunky radius 3000` then `chunky start`, so exploring doesn't cause lag spikes.
+
 ## Limitations & Drawbacks
 While this method is powerful and free, it comes with a few limitations you should be aware of:
 
