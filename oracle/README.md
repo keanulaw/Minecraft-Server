@@ -18,6 +18,13 @@ You do the clicking in Oracle's website (about 15 minutes). One script does ever
 4. **Add SSH keys:** choose **Generate a key pair for me** and click **Save private key**. Keep this file. You need it to connect.
 5. Click **Create**.
    - If you see **Out of capacity**, change the **Availability domain** in the Placement section and try again, or try again later. This is common, keep trying.
+   - Or let a script keep trying for you: open **Cloud Shell** (the `>_` icon at the top right of the console) and run:
+     ```bash
+     curl -fsSLO https://raw.githubusercontent.com/keanulaw/Minecraft-Server/claude/bold-pasteur-61vjre/oracle/create-server.sh
+     chmod +x create-server.sh
+     ./create-server.sh
+     ```
+     It retries every minute until Oracle has room, then prints the IP and the `ssh` command to connect from Cloud Shell. If Cloud Shell disconnects, open it again and run `./create-server.sh` again.
 6. When the instance is **Running**, copy its **Public IP address**.
 
 ## Step 3 - Get the server pack download link
