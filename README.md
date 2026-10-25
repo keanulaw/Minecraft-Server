@@ -67,6 +67,9 @@ For a smooth server with a small group of friends, stop the server and run:
 ```
 It lowers view distance to 8 and simulation distance to 6, switches the launcher to Aikar's JVM flags with RAM sized to your Codespace, and installs the Chunky plugin. Afterwards, pre-generate the world once from the console with `chunky radius 3000` then `chunky start`, so exploring doesn't cause lag spikes.
 
+## Better MC Modpack on Oracle Cloud (24/7)
+Want to play the Better MC modpack without the Codespaces hour limit? See [oracle/README.md](oracle/README.md) to run it free on Oracle Cloud's Always Free tier.
+
 ## Limitations & Drawbacks
 While this method is powerful and free, it comes with a few limitations you should be aware of:
 
