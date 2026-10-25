@@ -9,7 +9,9 @@ MEMORY="${2:-24}"
 NAME="minecraft"
 SHAPE="VM.Standard.A1.Flex"
 KEY="$HOME/.ssh/minecraft_key"
-WAIT=60
+WAIT=90
+LOG="$HOME/create-server.log"
+PIDFILE="$HOME/create-server.pid"
 
 if [ "$OCPUS" -gt 4 ] || [ "$MEMORY" -gt 24 ]; then
     echo "!! Always Free allows at most 4 OCPUs and 24GB. Stopping so you are not charged."
@@ -27,6 +29,23 @@ if [ -z "$TENANCY" ] || [ "$TENANCY" = "null" ]; then
     echo "Could not find your tenancy ID automatically."
     echo "Find it in the console: profile icon (top right) -> Tenancy -> OCID -> Copy."
     read -r -p "Paste your tenancy OCID: " TENANCY
+fi
+
+# --- Keep running in the background, so a Cloud Shell disconnect does not stop it ---
+if [ -z "$CREATE_SERVER_BG" ]; then
+    if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+        echo "=> Already running in the background. Showing its progress."
+    else
+        CREATE_SERVER_BG=1 OCI_TENANCY="$TENANCY" nohup "$(readlink -f "$0")" "$OCPUS" "$MEMORY" > "$LOG" 2>&1 &
+        echo $! > "$PIDFILE"
+        echo "=> Started in the background."
+    fi
+    echo "   Press Ctrl+C to stop watching. It keeps trying either way."
+    echo "   To watch again later: tail -f $LOG"
+    echo ""
+    sleep 2
+    tail -n 30 -f "$LOG"
+    exit 0
 fi
 
 # --- Stop if the server already exists ---
@@ -89,23 +108,26 @@ if [ -z "$INSTANCE" ]; then
             echo "=> Success! The server is being created."
             break
         elif echo "$OUT" | grep -qi "capacity"; then
-            echo "   Out of capacity. Trying again in ${WAIT}s. Leave this tab open."
+            echo "   Out of capacity. Trying again in ${WAIT}s."
         elif echo "$OUT" | grep -qi "TooManyRequests"; then
-            echo "   Oracle asked to slow down. Waiting 3 minutes."
-            sleep 120
+            echo "   Oracle asked to slow down. Waiting 5 minutes."
+            sleep 210
         elif echo "$OUT" | grep -qi "LimitExceeded"; then
             echo "!! Oracle says you reached your limit. You may already have an Ampere server,"
             echo "   or the account is still being set up. Check Compute -> Instances."
+            rm -f "$PIDFILE"
             exit 1
         else
             echo "!! Unexpected error. Send this to Claude:"
             echo "$OUT"
+            rm -f "$PIDFILE"
             exit 1
         fi
         TRY=$((TRY + 1))
         sleep "$WAIT"
     done
 fi
+rm -f "$PIDFILE"
 
 # --- Wait for it to start and show the IP ---
 echo "=> Waiting for the server to start..."

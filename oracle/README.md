@@ -24,7 +24,7 @@ You do the clicking in Oracle's website (about 15 minutes). One script does ever
      chmod +x create-server.sh
      ./create-server.sh
      ```
-     It retries every minute until Oracle has room, then prints the IP and the `ssh` command to connect from Cloud Shell. If Cloud Shell disconnects, open it again and run `./create-server.sh` again.
+     It keeps retrying in the background until Oracle has room, even if Cloud Shell disconnects. To check on it later, open Cloud Shell and run `./create-server.sh` again: it shows the progress instead of starting a second copy. When it finishes, it prints the IP and the `ssh` command to connect from Cloud Shell.
 6. When the instance is **Running**, copy its **Public IP address**.
 
 ## Step 3 - Get the server pack download link
