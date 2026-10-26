@@ -67,6 +67,19 @@ For a smooth server with a small group of friends, stop the server and run:
 ```
 It lowers view distance to 8 and simulation distance to 6, switches the launcher to Aikar's JVM flags with RAM sized to your Codespace, and installs the Chunky plugin. Afterwards, pre-generate the world once from the console with `chunky radius 3000` then `chunky start`, so exploring doesn't cause lag spikes.
 
+## Better MC Modpack on Codespaces
+Runs the **Better MC [BMC6]** modpack instead of the Paper server. It needs the **4-core / 16GB** machine type, and every player must install the same Better MC version in the CurseForge app. Bedrock players cannot join a modded server.
+
+1. Stop the Paper server first (type `stop`). Both use port 25565.
+2. On CurseForge, open Better MC [BMC6] → Files, download the latest **Server Pack**, and copy its download link from your browser's downloads list.
+3. Run:
+   ```bash
+   ./bettermc.sh "PASTE_SERVER_PACK_LINK_HERE"
+   ```
+   You can also drag the server pack `.zip` into this folder in VS Code and run `./bettermc.sh` without a link.
+
+After the first time, just run `./bettermc.sh` to start it. Your Paper server and world stay untouched, so `./start.sh` still starts the Paper server. `./playit.sh` works the same for both.
+
 ## Better MC Modpack on Oracle Cloud (24/7)
 Want to play the Better MC modpack without the Codespaces hour limit? See [oracle/README.md](oracle/README.md) to run it free on Oracle Cloud's Always Free tier.
 
