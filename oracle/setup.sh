@@ -1,6 +1,6 @@
 #!/bin/bash
-# Sets up a Better MC (BMC5) server on an Oracle Cloud Always Free Ubuntu VM.
-# It installs Java 21, unpacks the server pack, sizes RAM to the machine,
+# Sets up a Better MC server on an Oracle Cloud Always Free Ubuntu VM.
+# It installs Java 25, unpacks the server pack, sizes RAM to the machine,
 # installs Playit.gg, and runs everything as services that start on boot.
 #
 # Usage: ./setup.sh <server pack .zip download link, or path to the .zip>
@@ -18,9 +18,22 @@ fi
 
 echo "=== Better MC server setup ==="
 
-echo "=> 1/6 Installing Java 21 and tools..."
+echo "=> 1/6 Installing Java 25 and tools..."
 sudo apt-get update -y
-sudo apt-get install -y openjdk-21-jre-headless unzip tmux curl wget
+sudo apt-get install -y unzip tmux curl wget
+JAVA_DIR="$BASE/java25"
+case "$(uname -m)" in
+    aarch64|arm64) JAVA_ARCH=aarch64; PLAYIT_ARCH=aarch64 ;;
+    *) JAVA_ARCH=x64; PLAYIT_ARCH=amd64 ;;
+esac
+if [ ! -x "$JAVA_DIR/bin/java" ]; then
+    mkdir -p "$JAVA_DIR"
+    wget -q -O "$BASE/java25.tar.gz" "https://api.adoptium.net/v3/binary/latest/25/ga/linux/$JAVA_ARCH/jre/hotspot/normal/eclipse"
+    tar -xzf "$BASE/java25.tar.gz" -C "$JAVA_DIR" --strip-components=1
+    rm -f "$BASE/java25.tar.gz"
+fi
+export JAVA_HOME="$JAVA_DIR"
+export PATH="$JAVA_HOME/bin:$PATH"
 
 echo "=> 2/6 Getting the server pack..."
 mkdir -p "$BASE"
@@ -58,6 +71,7 @@ echo "eula=true" > eula.txt
 if [ -f variables.txt ]; then
     sed -i "s/^JAVA_ARGS=.*/JAVA_ARGS=\"-Xms${HEAP_GB}G -Xmx${HEAP_GB}G -XX:+UseG1GC\"/" variables.txt
     sed -i 's/^WAIT_FOR_USER_INPUT=.*/WAIT_FOR_USER_INPUT=false/' variables.txt
+    sed -i "s|^JAVA=.*|JAVA=\"$JAVA_DIR/bin/java\"|" variables.txt
 fi
 if [ -f user_jvm_args.txt ] || [ -f run.sh ]; then
     sed -i '/^-Xm[sx]/d' user_jvm_args.txt 2>/dev/null || true
@@ -91,10 +105,6 @@ chmod +x ./*.sh
 echo "   The server starts with: $START"
 
 echo "=> 4/6 Installing Playit.gg..."
-case "$(uname -m)" in
-    aarch64|arm64) PLAYIT_ARCH=aarch64 ;;
-    *) PLAYIT_ARCH=amd64 ;;
-esac
 wget -O "$BASE/playit" "https://github.com/playit-cloud/playit-agent/releases/download/v0.15.26/playit-linux-$PLAYIT_ARCH"
 chmod +x "$BASE/playit"
 
@@ -109,6 +119,8 @@ Wants=network-online.target
 Type=forking
 User=$USER
 WorkingDirectory=$SERVER
+Environment="JAVA_HOME=$JAVA_DIR"
+Environment="PATH=$JAVA_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ExecStart=/usr/bin/tmux new-session -d -s minecraft $START
 ExecStop=/bin/bash -c 'tmux send-keys -t minecraft "stop" Enter; while tmux has-session -t minecraft 2>/dev/null; do sleep 1; done'
 TimeoutStopSec=180

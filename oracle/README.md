@@ -1,6 +1,6 @@
 # Better MC Server on Oracle Cloud (Free, 24/7)
 
-Oracle Cloud's Always Free tier gives you a server with **4 cores and 24GB RAM**, with no monthly hour limit. That is enough to run the **Better MC [NEOFORGE] BMC5** modpack for a group of friends.
+Oracle Cloud's Always Free tier gives you a server with **4 cores and 24GB RAM**, with no monthly hour limit. That is enough to run the **Better MC [BMC6]** modpack for a group of friends.
 
 You do the clicking in Oracle's website (about 15 minutes). One script does everything else.
 
@@ -27,8 +27,13 @@ You do the clicking in Oracle's website (about 15 minutes). One script does ever
      It keeps retrying in the background until Oracle has room, even if Cloud Shell disconnects. To check on it later, open Cloud Shell and run `./create-server.sh` again: it shows the progress instead of starting a second copy. When it finishes, it prints the IP and the `ssh` command to connect from Cloud Shell.
 6. When the instance is **Running**, copy its **Public IP address**.
 
+### No Always Free capacity? Use the free trial credit
+New accounts get **$300 of trial credit for 30 days**. Instead of the Ampere shape, create the instance with **Change shape → AMD → VM.Standard.E5.Flex** (or E4.Flex), **4 OCPUs** and **24 GB memory**. This usually has capacity right away. It costs about $0.17 an hour from the credit, roughly $120 for a whole month running 24/7, so the credit covers it. You are not charged as long as you do not upgrade.
+
+When the 30 days end, Oracle stops and later deletes anything that is not Always Free. Back up the `world` folder before then.
+
 ## Step 3 - Get the server pack download link
-1. Open the Better MC [NEOFORGE] BMC5 page on CurseForge and go to **Files**.
+1. Open the Better MC [BMC6] page on CurseForge and go to **Files**.
 2. Open the latest file and download its **Server Pack** (not the normal modpack file).
 3. In your browser's downloads list, right-click the download and **Copy link address**.
 
@@ -51,7 +56,7 @@ That's it. The server and Playit run 24/7 and start by themselves if the VM rest
 
 ## Joining
 Every player needs the same modpack installed:
-1. Install the **CurseForge app**, search for **Better MC [NEOFORGE] BMC5**, and install the **same version** as the server.
+1. Install the **CurseForge app**, search for **Better MC [BMC6]**, and install the **same version** as the server.
 2. Launch it and join with your Playit address.
 
 Give the game at least 6GB of RAM in the CurseForge app settings.
